@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
   }
 
   cv::Mat frame;
+  capture >> frame; 
   while (capture.isOpened()) {
     bool is_success = capture.read(frame);
     if (!is_success)
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]) {
     if (!rend)
       break;
     SDL_RenderClear(rend.get());
-    SDL_RenderCopy(rend.get(), Slam::Display2D::CVToSDL(frame, rend.get()), 0,
+    SDL_RenderCopy(rend.get(), Slam::Display2D::CVToSDL(frame, rend.get()).get(), 0,
                    0);
     SDL_RenderPresent(rend.get());
     SDL_Delay(20);
