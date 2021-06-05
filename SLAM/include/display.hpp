@@ -6,11 +6,12 @@
 #include <functional>
 #include <iostream>
 #include <memory>
-#include <vector>
-#include <opencv4/opencv2/highgui.hpp>
 #include <opencv4/opencv2/core/types.hpp>
+#include <opencv4/opencv2/xfeatures2d.hpp>
 #include <opencv4/opencv2/features2d.hpp>
+#include <opencv4/opencv2/highgui.hpp>
 #include <opencv4/opencv2/opencv.hpp>
+#include <vector>
 
 namespace Slam {
 
@@ -28,25 +29,24 @@ struct Display2D {
 
     return 0;
   }
-  
-  static cv::Mat extract_feature(cv::Mat &mat)
-  {
-    //detector is a shared_ptr of type ORB 
-    auto detector = cv::ORB::create();
-    std::vector<cv::KeyPoint> keypoints; 
-    detector->detect(mat,keypoints); 
-    
-    // Draw key points 
-    cv::Mat keypoint_img; 
-    cv::drawKeypoints(mat, keypoints, keypoint_img,cv::Scalar(0,255,0),cv::DrawMatchesFlags::DEFAULT ); 
-    return keypoint_img; 
+
+  static cv::Mat extract_feature(cv::Mat &mat, const cv::Ptr<cv::ORB> &detector) {
+    std::vector<cv::KeyPoint> keypoints;
+    detector->detect(mat, keypoints);
+
+    // Draw key points
+    cv::Mat keypoint_img;
+    cv::drawKeypoints(mat, keypoints, keypoint_img, cv::Scalar(0, 255, 0),
+                      cv::DrawMatchesFlags::DEFAULT);
+    return keypoint_img;
   }
 
-  static std::unique_ptr<SDL_Texture,std::function<void(SDL_Texture*)>> CVToSDL(const cv::Mat &matrix, SDL_Renderer *rend) {
-    auto tex =std::unique_ptr<SDL_Texture, std::function<void(SDL_Texture*)>>(
+  static std::unique_ptr<SDL_Texture, std::function<void(SDL_Texture *)>>
+  CVToSDL(const cv::Mat &matrix, SDL_Renderer *rend) {
+    auto tex = std::unique_ptr<SDL_Texture, std::function<void(SDL_Texture *)>>(
         SDL_CreateTexture(rend, SDL_PIXELFORMAT_BGR24, SDL_TEXTUREACCESS_STATIC,
-                          matrix.cols, matrix.rows), 
-        SDL_DestroyTexture); 
+                          matrix.cols, matrix.rows),
+        SDL_DestroyTexture);
     SDL_UpdateTexture(tex.get(), nullptr, (void *)matrix.data, matrix.step1());
     return tex;
   }

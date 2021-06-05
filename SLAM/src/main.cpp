@@ -50,11 +50,15 @@ int main(int argc, char *argv[]) {
 
   cv::Mat frame;
   capture >> frame;
+  
+  auto detector = cv::ORB::create(1000);
+  std::vector<cv::KeyPoint> keypoints{}; 
+
   while (capture.isOpened()) {
     bool is_success = capture.read(frame);
     if (!is_success)
       break;
-    auto f = Slam::Display2D::extract_feature(frame); 
+    auto f = Slam::Display2D::extract_feature(frame,detector); 
     frame = std::move(f);
     if (!rend)
       break;
@@ -62,7 +66,7 @@ int main(int argc, char *argv[]) {
     SDL_RenderCopy(rend.get(),
                    Slam::Display2D::CVToSDL(frame, rend.get()).get(), 0, 0);
     SDL_RenderPresent(rend.get());
-    SDL_Delay(10);
+    //SDL_Delay(10);
   }
 
   SDL_Quit();
