@@ -49,18 +49,20 @@ int main(int argc, char *argv[]) {
   }
 
   cv::Mat frame;
-  capture >> frame; 
+  capture >> frame;
   while (capture.isOpened()) {
     bool is_success = capture.read(frame);
     if (!is_success)
       break;
+    auto f = Slam::Display2D::extract_feature(frame); 
+    frame = std::move(f);
     if (!rend)
       break;
     SDL_RenderClear(rend.get());
-    SDL_RenderCopy(rend.get(), Slam::Display2D::CVToSDL(frame, rend.get()).get(), 0,
-                   0);
+    SDL_RenderCopy(rend.get(),
+                   Slam::Display2D::CVToSDL(frame, rend.get()).get(), 0, 0);
     SDL_RenderPresent(rend.get());
-    SDL_Delay(20);
+    SDL_Delay(10);
   }
 
   SDL_Quit();
