@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.18)
 PROJECT(AUV)
 set(CMAKE_CXX_STANDARD 20)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV REQUIRED PATHS /opt/opencv/build/ NO_DEFAULT_PATH)
 find_package(SDL2 REQUIRED)
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -23,3 +23,4 @@ include_directories(${SDL2_INCLUDE_DIRS})
 target_include_directories(${PROJECT_NAME} PRIVATE SLAM/include)
 target_link_libraries(${PROJECT_NAME} ${OpenCV_LIBS})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES}) 
+target_link_libraries(${PROJECT_NAME} SDL2_image)
