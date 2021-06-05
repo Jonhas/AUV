@@ -1,6 +1,3 @@
-// Uncomment the following line if you are compiling this code in Visual Studio
-//#include "stdafx.h"
-
 #include <iostream>
 
 #include "../include/display.hpp"
@@ -50,16 +47,17 @@ int main(int argc, char *argv[]) {
 
   cv::Mat frame;
   capture >> frame;
-  
-  auto detector = cv::ORB::create(1000);
-  std::vector<cv::KeyPoint> keypoints{}; 
 
   while (capture.isOpened()) {
     bool is_success = capture.read(frame);
     if (!is_success)
       break;
-    auto f = Slam::Display2D::extract_feature(frame,detector); 
-    frame = std::move(f);
+    cv::Mat gray{}; 
+    cv::cvtColor(frame,gray,cv::COLOR_BGR2GRAY);
+    cv::GaussianBlur( gray, gray, cv::Size(9, 9), 2, 2 );
+    //auto f = Slam::Display2D::extract_feature(frame,detector); 
+    //frame = std::move(f);
+    Slam::Display2D::harris_extract(frame,gray); 
     if (!rend)
       break;
     SDL_RenderClear(rend.get());

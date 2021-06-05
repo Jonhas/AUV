@@ -7,9 +7,10 @@
 #include <iostream>
 #include <memory>
 #include <opencv4/opencv2/core/types.hpp>
+#include <opencv4/opencv2/core/base.hpp>
 #include <opencv4/opencv2/xfeatures2d.hpp>
 #include <opencv4/opencv2/features2d.hpp>
-#include <opencv4/opencv2/highgui.hpp>
+#include <opencv4/opencv2/imgproc.hpp>
 #include <opencv4/opencv2/opencv.hpp>
 #include <vector>
 
@@ -28,6 +29,15 @@ struct Display2D {
     IMG_Init(IMG_INIT_PNG);
 
     return 0;
+  }
+  
+  static void harris_extract(cv::Mat& mat, cv::Mat& gray)
+  {
+    std::vector<cv::Point2f> corners{};
+    cv::goodFeaturesToTrack(gray, corners, 3000, 0.01, 3);
+    
+    for(const auto &corner: corners)
+      cv::circle(mat, corner, 2, cv::Scalar(0,255,0)); 
   }
 
   static cv::Mat extract_feature(cv::Mat &mat, const cv::Ptr<cv::ORB> &detector) {
